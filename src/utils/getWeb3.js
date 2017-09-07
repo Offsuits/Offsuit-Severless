@@ -33,6 +33,8 @@ let getWeb3 = new Promise(function(resolve, reject) {
       resolve(results)
     }
   })
-})
+});
+
+
 
 export default getWeb3

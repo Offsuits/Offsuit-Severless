@@ -6,6 +6,10 @@ import './css/oswald.css'
 import './css/open-sans.css'
 import './css/pure-min.css'
 import './App.css'
+//
+const contract = require('truffle-contract')
+     const simpleStorage = contract(SimpleStorageContract)
+//     simpleStorage.setProvider(getWeb3().web3);
 
 class App extends Component {
   constructor(props) {
@@ -13,8 +17,10 @@ class App extends Component {
 
     this.state = {
       storageValue: 0,
-      web3: null
-    }
+      web3: null,
+      result: null
+    };
+    this.testServer = this.testServer.bind(this);
   }
 
   componentWillMount() {
@@ -25,14 +31,14 @@ class App extends Component {
     .then(results => {
       this.setState({
         web3: results.web3
-      })
+      });
 
       // Instantiate contract once web3 provided.
       this.instantiateContract()
     })
     .catch(() => {
       console.log('Error finding web3.')
-    })
+    });
   }
 
   instantiateContract() {
@@ -59,7 +65,7 @@ class App extends Component {
         return simpleStorageInstance.set(5, {from: accounts[0]})
       }).then((result) => {
         // Get the value from the contract to prove it worked.
-        return simpleStorageInstance.get.call(accounts[0])
+        return simpleStorageInstance.get.call(accounts[0]);
       }).then((result) => {
         // Update state with the result.
         return this.setState({ storageValue: result.c[0] })
@@ -67,9 +73,23 @@ class App extends Component {
     })
   }
 
-  testServer() {
 
-  }
+  testServer() {
+    //const simpleStorage = contract(SimpleStorageContract)
+    var provider = this.state.web3.currentProvider;
+    var contract = require("truffle-contract");
+    var MyContract = contract(SimpleStorageContract)
+    MyContract.setProvider(provider);
+    
+     var deployed;
+     MyContract.deployed().then((instance)=> {
+       
+       return instance.sendName.call();
+     }).then((result)=> {
+      console.log(result);
+     })
+   }
+    
 
   render() {
     return (
@@ -83,6 +103,7 @@ class App extends Component {
             <div className="pure-u-1-1">
               <h1>Offsuit baby</h1>
               <p>We are awesomeeee</p>
+
               <button onClick={this.testServer}>click me! </button>
               <h2>Smart Contract Example</h2>
               <p>If your contracts compiled and migrated successfully, below will show a stored value of 5 (by default).</p>
