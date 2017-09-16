@@ -29,10 +29,12 @@ class App extends Component {
       flopC: null,
       account: null
     };
+
     this.testServer = this.testServer.bind(this);
     this.receiveCards = this.receiveCards.bind(this);
     this.deal = this.deal.bind(this);
     this.increase = this.increase.bind(this);
+    
 
   }
 
@@ -52,6 +54,8 @@ class App extends Component {
     .catch(() => {
       console.log('Error finding web3.')
     });
+
+    
   }
 
   instantiateContract() {
@@ -76,7 +80,7 @@ class App extends Component {
 
     // Get accounts.
     this.state.web3.eth.getAccounts((error, accounts) => {
-        this.setState({account: accounts[1]})
+        this.setState({account: accounts[0]})
       simpleStorage.deployed().then((instance) => {
 
         simpleStorageInstance = instance
@@ -103,10 +107,23 @@ class App extends Component {
 
     // Declaring this for later so we can chain functions on SimpleStorage.
     var con;
-    
+    //  var filter = this.state.web3.eth.filter('latest');
+    // filter.watch((err, result)=>{
+    //   if(!err){
+    //     console.log(result);
+    //   }
+    // });
+
+
+   
       
       return simpleStorage.deployed().then((r)=> {
         con = r;
+         con.Adder().watch((err, event)=>{
+      if(!err){
+        console.log(event.args.counter.c[0]);
+      }
+    })
         return con.sendName.call(this.state.account);
       }).then((blah)=>{
         console.log('first line ' + blah);
