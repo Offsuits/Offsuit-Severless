@@ -30,9 +30,13 @@ contract SimpleStorage {
     counter = 2;
   }
 
+  event Adder(uint counter);
+
   function increment(uint d) 
     {
+      
       counter = counter + d;
+      Adder(counter);
     }
     
     function getCounter() constant returns (uint) 
